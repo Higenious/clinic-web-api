@@ -1,15 +1,38 @@
-import app from './app';
-import connectDB from './src/config/db';
+import express from 'express';
+import adminRoutes from './src/routes/adminRoutes';
+import doctorRoutes from './src/routes/doctorRoutes';
+import authRoutes from './src/routes/authRoutes';
 
-const PORT = process.env.PORT || 3000;
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
-const startServer = async () => {
-  await connectDB();
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-};
+dotenv.config();
 
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
+const app = express();
 
-startServer();
+app.use(express.json());
+
+// Logging middleware
+app.use((req, res, next) => {
+  console.log(`🔥 Incoming Request: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
+app.use('/api', authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/doctor', doctorRoutes);
+
+mongoose.connect(process.env.MONGO_URI!).then(() => {
+  console.log('🔥 Succefully Connected to MongoDB');
+});
+
+// Test route
+app.get('/test', (req, res) => res.send('Server is working'));
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🔥 Sucessfully Started running Server on port ${PORT}`);
+});
+
+export default app;
