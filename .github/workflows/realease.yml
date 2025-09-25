@@ -40,5 +40,5 @@ jobs:
         run: |
           aws ecs update-service \
             --cluster myclinic-cluster \
-            --service myclinic-api-service \
+            --service myclincs-web-api-services \
             --force-new-deployment
