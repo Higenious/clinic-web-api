@@ -31,8 +31,8 @@
             "portMappings": [
                 {
                     "appProtocol": "http",
-                    "containerPort": 5000,
-                    "hostPort": 5000,
+                    "containerPort": 3000,
+                    "hostPort": 3000,
                     "name": "web",
                     "protocol": "tcp"
                 }

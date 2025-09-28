@@ -39,7 +39,7 @@ jobs:
         id: ecr_details
         run: |
           echo "ECR_REPOSITORY=711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api" >> $GITHUB_ENV
-          echo "CONTAINER_NAME=myclinic-api-container" >> $GITHUB_ENV 
+          echo "CONTAINER_NAME=myclinic-app-container" >> $GITHUB_ENV 
           
       - name: Build, tag, and push image to ECR
         run: |
