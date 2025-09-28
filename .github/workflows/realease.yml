@@ -10,8 +10,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ... (Steps 1 through 5: Checkout, Node setup, AWS auth, ECR login, Tagging, Build/Push) are unchanged ...
-      
+      # Step 1: Checkout code - MUST be done before Docker build
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js (assuming Node is needed for your build process)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Step 3: Define Unique Image Tag based on commit SHA
+      - name: Set image tag
+        id: set_tag
+        run: echo "IMAGE_TAG=$(echo $GITHUB_SHA | cut -c 1-8)" >> $GITHUB_ENV
+
+      # Step 4: Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # Step 5: Log in to Amazon ECR
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Define ECR repository path and container name
       - name: Set ECR repository details
         id: ecr_details
         run: |
@@ -19,6 +46,7 @@ jobs:
           echo "CONTAINER_NAME=myclinic-app-container" >> $GITHUB_ENV # Ensure this matches your JSON!
           
       - name: Build, tag, and push image to ECR
+        # This step assumes a file named 'Dockerfile' exists in the repository root (./)
         run: |
           docker build -t myclinic-api .
           docker tag myclinic-api:latest ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
