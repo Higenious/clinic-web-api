@@ -37,7 +37,6 @@ export const loginUser = async (req: Request, res: Response) => {
     );
 
     // 2. Update the user's active session ID in the database
-    // This immediately invalidates any previous session for this user.
     await User.updateOne(
         { _id: user._id },
         { activeSessionId: sessionId }

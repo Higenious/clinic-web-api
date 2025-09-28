@@ -18,12 +18,9 @@ const app = express();
 // Allowing requests from all origins (*). 
 // You should restrict this to your actual frontend domain(s) in a production environment.
 app.use(cors({
-  origin: [
-    'http://localhost:5173', // Your frontend application's origin
-    'http://127.0.0.1:5173', // Include 127.0.0.1 as a safe measure
-  ],
+  origin: '*', // CHANGE THIS TO YOUR FRONTEND URL IN PRODUCTION!
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true, // Important if you use cookies or sessions
+  credentials: true, // Crucial if sending tokens/cookies
 }));
 
 app.use(express.json());
