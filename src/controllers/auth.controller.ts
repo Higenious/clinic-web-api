@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid'; // You'll need to install the 'uuid' packag
 
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
+  console.log(`Backend: Received login request for email: ${email}`);
 
   try {
     const user = await User.findOne({ email });
@@ -42,7 +43,7 @@ export const loginUser = async (req: Request, res: Response) => {
         { activeSessionId: sessionId }
     );
 
-    res.json({
+    return res.json({
       message: 'Login successful',
       token,
       user: {
