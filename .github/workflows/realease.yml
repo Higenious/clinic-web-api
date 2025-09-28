@@ -28,7 +28,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Log in to Amazon ECR
@@ -72,11 +72,10 @@ jobs:
           # Get the path to the JSON file rendered in the previous step
           TASK_DEFINITION_FILE=${{ steps.render-container.outputs.task-definition }}
           
-          # FIX: Added --tags to satisfy the AWS ClientException requirement.
-          # We use the unique commit SHA (IMAGE_TAG) as the tag value.
+          # FIX: Corrected Key= and Value= to lowercase key= and value= to satisfy AWS CLI.
           TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://$TASK_DEFINITION_FILE \
-            --tags Key=DeploymentSha,Value=${{ env.IMAGE_TAG }} \
+            --tags key=DeploymentSha,value=${{ env.IMAGE_TAG }} \
             --query 'taskDefinition.taskDefinitionArn' \
             --output text)
             
