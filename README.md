@@ -27,9 +27,8 @@
 
 ### Fetures 
  1. WhatsApp Notifications, Email sendings  
- 2. Payment integration
  3. Custom logo
- 4. Video Consultation Support
+
 
 
 

@@ -2,6 +2,7 @@
 
 import mongoose, { Document, Schema } from 'mongoose';
 
+// 1. UPDATE INTERFACE
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -9,9 +10,11 @@ export interface IUser extends Document {
   role: 'doctor' | 'admin' | 'staff';
   hospitalId?: mongoose.Types.ObjectId;
   isApproved: boolean;
+  activeSessionId?: string;
   createdAt: Date;
 }
 
+// 2. UPDATE SCHEMA
 const userSchema = new Schema<IUser>({
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true },
@@ -25,9 +28,9 @@ const userSchema = new Schema<IUser>({
     },
   },
   isApproved: { type: Boolean, default: false },
+  activeSessionId: { type: String, default: null }, // <--- NEW FIELD
   createdAt: { type: Date, default: Date.now },
 });
-
 
 const User = mongoose.model<IUser>('User', userSchema);
 export default User;
