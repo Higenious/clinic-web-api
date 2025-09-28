@@ -10,22 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code - MUST be done before Docker build
+      # FIX: This step is ESSENTIAL for Docker build to find the Dockerfile and source code.
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js (assuming Node is needed for your build process)
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # Step 3: Define Unique Image Tag based on commit SHA
+      # 1. Define Unique Image Tag based on commit SHA
       - name: Set image tag
         id: set_tag
         run: echo "IMAGE_TAG=$(echo $GITHUB_SHA | cut -c 1-8)" >> $GITHUB_ENV
 
-      # Step 4: Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -33,7 +31,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # Step 5: Log in to Amazon ECR
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -43,14 +40,18 @@ jobs:
         id: ecr_details
         run: |
           echo "ECR_REPOSITORY=711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api" >> $GITHUB_ENV
-          echo "CONTAINER_NAME=myclinic-app-container" >> $GITHUB_ENV # Ensure this matches your JSON!
+          echo "CONTAINER_NAME=myclinic-app-container" >> $GITHUB_ENV 
           
       - name: Build, tag, and push image to ECR
-        # This step assumes a file named 'Dockerfile' exists in the repository root (./)
+        # This command assumes your Dockerfile is in the root directory.
         run: |
           docker build -t myclinic-api .
+          
+          # Tag with the unique SHA
           docker tag myclinic-api:latest ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          
+          # Optionally push 'latest' as a secondary tag
           docker tag myclinic-api:latest ${{ env.ECR_REPOSITORY }}:latest
           docker push ${{ env.ECR_REPOSITORY }}:latest
 
@@ -60,25 +61,28 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         id: render-container
         with:
+          # IMPORTANT: This action only modifies the local file
           task-definition: task-definition.json 
           container-name: ${{ env.CONTAINER_NAME }} 
           image: ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} # Use the unique tag
 
-      # 3. REGISTER and DEPLOY the service using the rendered JSON file
+      # 3. FIX: Register the rendered Task Definition and Deploy to ECS Fargate
       - name: Register Task Definition and Deploy to ECS Fargate
         run: |
-          # The render step outputs the path to the modified JSON file
+          # Get the path to the JSON file rendered in the previous step
           TASK_DEFINITION_FILE=${{ steps.render-container.outputs.task-definition }}
           
-          # Register the new Task Definition with AWS and capture the ARN
+          # FIX: Added --tags to satisfy the AWS ClientException requirement.
+          # We use the unique commit SHA (IMAGE_TAG) as the tag value.
           TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://$TASK_DEFINITION_FILE \
+            --tags Key=DeploymentSha,Value=${{ env.IMAGE_TAG }} \
             --query 'taskDefinition.taskDefinitionArn' \
             --output text)
             
           echo "Registered Task Definition ARN: $TASK_DEF_ARN"
           
-          # Update the ECS service with the newly registered ARN
+          # Update the ECS service with the newly registered ARN to trigger deployment
           aws ecs update-service \
             --cluster myclinic-cluster \
             --service myclincs-web-api-services \
