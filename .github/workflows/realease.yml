@@ -67,12 +67,12 @@ jobs:
           image: ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} # Use the unique tag
 
       # 3. FIX: Register the rendered Task Definition and Deploy to ECS Fargate
-      - name: Register Task Definition and Deploy to ECS Fargate
+      - name: Register Task Definition, Deploy, and Wait for Service Stability
         run: |
           # Get the path to the JSON file rendered in the previous step
           TASK_DEFINITION_FILE=${{ steps.render-container.outputs.task-definition }}
           
-          # FIX: Corrected Key= and Value= to lowercase key= and value= to satisfy AWS CLI.
+          # Corrected Key= and Value= to lowercase key= and value= to satisfy AWS CLI.
           TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://$TASK_DEFINITION_FILE \
             --tags key=DeploymentSha,value=${{ env.IMAGE_TAG }} \
@@ -81,9 +81,17 @@ jobs:
             
           echo "Registered Task Definition ARN: $TASK_DEF_ARN"
           
-          # Update the ECS service with the newly registered ARN to trigger deployment
+          # 1. Update the ECS service with the newly registered ARN to trigger deployment
           aws ecs update-service \
             --cluster myclinic-cluster \
             --service myclincs-web-api-services \
             --task-definition $TASK_DEF_ARN \
             --force-new-deployment
+            
+          # 2. FIX: Wait for the deployment to succeed or fail. 
+          # This will hold the GitHub Action until the service is stable, 
+          # or fail the action if the deployment rolls back.
+          echo "Waiting for ECS service deployment to stabilize..."
+          aws ecs wait services-stable \
+            --cluster myclinic-cluster \
+            --services myclincs-web-api-services
