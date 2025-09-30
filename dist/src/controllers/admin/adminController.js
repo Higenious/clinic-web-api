@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createHospital = exports.getPatientsByDoctor = exports.approveUser = exports.getDoctors = void 0;
+exports.getAllMedicinesLists = exports.createHospital = exports.getPatientsByDoctor = exports.approveUser = exports.getDoctors = void 0;
 const User_1 = __importDefault(require("../../models/User"));
 const Patient_1 = __importDefault(require("../../models/Patient"));
 const Hospital_1 = __importDefault(require("../../models/Hospital"));
@@ -84,3 +84,13 @@ function generateHospitalId(name) {
     const randomDigits = Math.floor(10000000 + Math.random() * 90000000);
     return `HOSPI${firstWord}${randomDigits}`;
 }
+/** Medicines */
+const getAllMedicinesLists = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log('Get All Medicines');
+    }
+    catch (error) {
+        console.log('Error in getAllMedicinesLists', error);
+    }
+});
+exports.getAllMedicinesLists = getAllMedicinesLists;
