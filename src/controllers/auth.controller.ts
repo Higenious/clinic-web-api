@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
-import { v4 as uuidv4 } from 'uuid'; // You'll need to install the 'uuid' package (npm install uuid @types/uuid)
+import { v4 as uuidv4 } from 'uuid';
 
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;

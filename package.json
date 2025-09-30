@@ -4,13 +4,14 @@
   "description": "clinic-app",
   "main": "index.js",
   "scripts": {
-      "dev": "ts-node-dev --respawn --transpile-only server.ts",
-      "build": "tsc",
-      "start": "node dist/server.js"
-    },
+    "dev": "ts-node-dev --respawn --transpile-only server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
   "author": "Chetan Tayade",
   "license": "ISC",
   "dependencies": {
+    "@types/uuid": "^10.0.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
