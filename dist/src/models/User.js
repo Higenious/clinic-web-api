@@ -35,6 +35,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+// 2. UPDATE SCHEMA
 const userSchema = new mongoose_1.Schema({
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true },
@@ -48,6 +49,7 @@ const userSchema = new mongoose_1.Schema({
         },
     },
     isApproved: { type: Boolean, default: false },
+    activeSessionId: { type: String, default: null }, // <--- NEW FIELD
     createdAt: { type: Date, default: Date.now },
 });
 const User = mongoose_1.default.model('User', userSchema);
