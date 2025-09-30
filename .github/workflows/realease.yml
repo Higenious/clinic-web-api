@@ -65,4 +65,4 @@ jobs:
           task-definition: ${{ steps.render-container.outputs.task-definition }}
           service: myclincs-web-api-services
           cluster: myclinic-cluster
-          wait-for-service-stability: true
+          wait-for-service-stability: false
