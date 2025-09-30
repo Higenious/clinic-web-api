@@ -1,9 +1,9 @@
 // server.ts
 
 import express from 'express';
-import adminRoutes from './src/routes/adminRoutes';
-import doctorRoutes from './src/routes/doctorRoutes';
-import authRoutes from './src/routes/authRoutes';
+import adminRoutes from './routes/adminRoutes';
+import doctorRoutes from './routes/doctorRoutes';
+import authRoutes from './routes/authRoutes';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors'; // <--- 1. Import CORS
