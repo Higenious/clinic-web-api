@@ -6,7 +6,6 @@ import {
   createHospital
 } from "../controllers/admin/adminController";
 
-console.log('admin routes===>');
 
 const router = express.Router();
 
