@@ -55,8 +55,8 @@ jobs:
         id: render-container
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition.json   # Your base task def file
-          container-name: ${{ env.CONTAINER_NAME }}
+          task-definition: task-definition.json
+          container-name: myclinic-app-container
           image: ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
       - name: Deploy to ECS
