@@ -31,13 +31,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/health', async (req, res) => {
-  const state = mongoose.connection.readyState; 
-  if (state === 1) { // 1 = connected
-    res.sendStatus(200);
-  } else {
-    res.status(500).json({ status: 'unhealthy', dbState: state });
-  }
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date() });
 });
 
 app.use('/api', authRoutes);
