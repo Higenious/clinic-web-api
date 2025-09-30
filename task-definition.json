@@ -12,7 +12,7 @@
     "containerDefinitions": [
       {
         "name": "myclinic-app-container",
-        "image": "711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api:latest",
+        "image": "711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api:PLACEHOLDER",
         "essential": true,
         "environment": [
           {
