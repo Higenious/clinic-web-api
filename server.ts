@@ -27,7 +27,7 @@ app.use(express.json());
 
 // Logging middleware
 app.use((req, res, next) => {
-  console.log(`🔥 Incoming Request: ${req.method} ${req.originalUrl}`);
+  console.log(`🔥 All Incoming Request - - -: ${req.method} ${req.originalUrl}`);
   next();
 });
 
@@ -36,7 +36,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/doctor', doctorRoutes);
 
 mongoose.connect(process.env.MONGO_URI!).then(() => {
-  console.log('🔥 Succefully Connected to MongoDB');
+  console.log('Succefully Connected to MongoDB - - ');
 });
 
 // Test route
