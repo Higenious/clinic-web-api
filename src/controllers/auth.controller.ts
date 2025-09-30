@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
+const uuidv4 = require('uuid').v4;
 
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -23,18 +24,17 @@ export const loginUser = async (req: Request, res: Response) => {
     if (!isMatch)
       return res.status(401).json({ message: 'Invalid email or password.' });
 
-    const generateSessionId = () => [...Array(16)].map(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 62))).join('');
-    console.log('generateSessionId====>', generateSessionId);
-
+    const sessionId = uuidv4();
+    console.log('generateSessionId====>', sessionId);
+ 
     // 1. Generate a unique ID for this session (JTI)
-    const sessionId = generateSessionId;
 
     const token = jwt.sign(
       {
         userId: user._id,
         role: user.role,
         hospitalId: user.hospitalId,
-        jti: sessionId, // <--- EMBED THE SESSION ID IN THE TOKEN
+        jti: sessionId,
       },
       process.env.JWT_SECRET || 'your_jwt_secret',
       { expiresIn: '7d' }
