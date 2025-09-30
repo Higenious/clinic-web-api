@@ -31,6 +31,15 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/health', async (req, res) => {
+  const state = mongoose.connection.readyState; 
+  if (state === 1) { // 1 = connected
+    res.sendStatus(200);
+  } else {
+    res.status(500).json({ status: 'unhealthy', dbState: state });
+  }
+});
+
 app.use('/api', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/doctor', doctorRoutes);
