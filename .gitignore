@@ -1,9 +1,8 @@
 # Node modules
 node_modules/
 
-# Build output
+# Ignore build output
 dist/
-build/
 
 # TypeScript cache
 *.tsbuildinfo
