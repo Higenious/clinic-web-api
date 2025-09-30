@@ -77,3 +77,16 @@ function generateHospitalId(name: string): string {
   const randomDigits = Math.floor(10000000 + Math.random() * 90000000);
   return `HOSPI${firstWord}${randomDigits}`;
 }
+
+
+/** Medicines */
+
+export const  getAllMedicinesLists =async(req: Request, res: Response)=>{
+  try {
+    console.log('Get All Medicines');
+    
+  } catch (error) {
+    console.log('Error in getAllMedicinesLists', error)
+    
+  }
+}

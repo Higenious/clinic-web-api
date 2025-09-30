@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # FIX: This step is ESSENTIAL for Docker build to find the Dockerfile and source code.
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -19,7 +18,7 @@ jobs:
         with:
           node-version: '18'
 
-      # 1. Define Unique Image Tag based on commit SHA
+      # Unique Image Tag = short SHA
       - name: Set image tag
         id: set_tag
         run: echo "IMAGE_TAG=$(echo $GITHUB_SHA | cut -c 1-8)" >> $GITHUB_ENV
@@ -32,66 +31,38 @@ jobs:
           aws-region: us-east-1
 
       - name: Log in to Amazon ECR
-        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Define ECR repository path and container name
       - name: Set ECR repository details
-        id: ecr_details
         run: |
           echo "ECR_REPOSITORY=711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api" >> $GITHUB_ENV
           echo "CONTAINER_NAME=myclinic-app-container" >> $GITHUB_ENV 
-          
+
       - name: Build, tag, and push image to ECR
-        # This command assumes your Dockerfile is in the root directory.
         run: |
-          docker build -t myclinic-api .
-          
-          # Tag with the unique SHA
+          # Build without cache to avoid old code
+          docker build --no-cache -t myclinic-api .
+
+          # Tag with SHA
           docker tag myclinic-api:latest ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          
-          # Optionally push 'latest' as a secondary tag
+
+          # (Optional) Also push 'latest'
           docker tag myclinic-api:latest ${{ env.ECR_REPOSITORY }}:latest
           docker push ${{ env.ECR_REPOSITORY }}:latest
 
-
-      # 2. Render Task Definition JSON with the new image tag
-      - name: Fill in the new image in the Task Definition
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
+      - name: Render new ECS task definition
         id: render-container
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          # IMPORTANT: This action only modifies the local file
-          task-definition: task-definition.json 
-          container-name: ${{ env.CONTAINER_NAME }} 
-          image: ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} # Use the unique tag
+          task-definition: task-definition.json   # Your base task def file
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
-      # 3. FIX: Register the rendered Task Definition and Deploy to ECS Fargate
-      - name: Register Task Definition, Deploy, and Wait for Service Stability
-        run: |
-          # Get the path to the JSON file rendered in the previous step
-          TASK_DEFINITION_FILE=${{ steps.render-container.outputs.task-definition }}
-          
-          # Corrected Key= and Value= to lowercase key= and value= to satisfy AWS CLI.
-          TASK_DEF_ARN=$(aws ecs register-task-definition \
-            --cli-input-json file://$TASK_DEFINITION_FILE \
-            --tags key=DeploymentSha,value=${{ env.IMAGE_TAG }} \
-            --query 'taskDefinition.taskDefinitionArn' \
-            --output text)
-            
-          echo "Registered Task Definition ARN: $TASK_DEF_ARN"
-          
-          # 1. Update the ECS service with the newly registered ARN to trigger deployment
-          aws ecs update-service \
-            --cluster myclinic-cluster \
-            --service myclincs-web-api-services \
-            --task-definition $TASK_DEF_ARN \
-            --force-new-deployment
-            
-          # 2. FIX: Wait for the deployment to succeed or fail. 
-          # This will hold the GitHub Action until the service is stable, 
-          # or fail the action if the deployment rolls back.
-          echo "Waiting for ECS service deployment to stabilize..."
-          aws ecs wait services-stable \
-            --cluster myclinic-cluster \
-            --services myclincs-web-api-services
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-container.outputs.task-definition }}
+          service: myclincs-web-api-services
+          cluster: myclinic-cluster
+          wait-for-service-stability: true
