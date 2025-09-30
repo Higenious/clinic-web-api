@@ -14,8 +14,6 @@
         "name": "myclinic-app-container",
         "image": "711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api:latest",
         "essential": true,
-        "cpu": 0,
-        "memory": 0,
         "environment": [
           {
             "name": "MONGO_URI",
