@@ -1,92 +1,42 @@
 {
-    "compatibilities": [
-        "EC2",
-        "MANAGED_INSTANCES",
-        "FARGATE"
-    ],
-    "containerDefinitions": [
-        {
-            "cpu": 0,
-            "environment": [
-                {
-                    "name": "MONGO_URI",
-                    "value": "mongodb://admin:RadhaKrishna12@54.237.102.185:27017/myclinic?authSource=admin"
-                }
-            ],
-            "environmentFiles": [],
-            "essential": true,
-            "image": "711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api:latest",
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-group": "/ecs/myclinic-api-task",
-                    "awslogs-create-group": "true",
-                    "awslogs-region": "us-east-1",
-                    "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
-            },
-            "mountPoints": [],
-            "name": "myclinic-app-container",
-            "portMappings": [
-                {
-                    "appProtocol": "http",
-                    "containerPort": 3000,
-                    "hostPort": 3000,
-                    "name": "web",
-                    "protocol": "tcp"
-                }
-            ],
-            "systemControls": [],
-            "ulimits": [],
-            "volumesFrom": []
-        }
-    ],
-    "cpu": "1024",
-    "enableFaultInjection": false,
-    "executionRoleArn": "arn:aws:iam::711538462588:role/ecsTaskExecutionRole",
     "family": "web-api-task",
-    "memory": "3072",
     "networkMode": "awsvpc",
-    "placementConstraints": [],
-    "registeredAt": "2025-09-25T09:48:22.387Z",
-    "registeredBy": "arn:aws:iam::711538462588:root",
-    "requiresAttributes": [
-        {
-            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-        },
-        {
-            "name": "ecs.capability.execution-role-awslogs"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.ecr-auth"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-        },
-        {
-            "name": "ecs.capability.execution-role-ecr-pull"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-        },
-        {
-            "name": "ecs.capability.task-eni"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-        }
-    ],
-    "requiresCompatibilities": [
-        "FARGATE"
-    ],
-    "revision": 2,
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "1024",
+    "memory": "3072",
+    "executionRoleArn": "arn:aws:iam::711538462588:role/ecsTaskExecutionRole",
     "runtimePlatform": {
-        "cpuArchitecture": "X86_64",
-        "operatingSystemFamily": "LINUX"
+      "cpuArchitecture": "X86_64",
+      "operatingSystemFamily": "LINUX"
     },
-    "status": "ACTIVE",
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:711538462588:task-definition/web-api-task:2",
-    "volumes": [],
-    "tags": []
-}
+    "containerDefinitions": [
+      {
+        "name": "myclinic-app-container",
+        "image": "711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api:latest",
+        "essential": true,
+        "cpu": 0,
+        "memory": 0,
+        "environment": [
+          {
+            "name": "MONGO_URI",
+            "value": "mongodb://admin:RadhaKrishna12@54.237.102.185:27017/myclinic?authSource=admin"
+          }
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/myclinic-api-task",
+            "awslogs-region": "us-east-1",
+            "awslogs-stream-prefix": "ecs"
+          }
+        },
+        "portMappings": [
+          {
+            "containerPort": 3000,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    ]
+  }
+  
