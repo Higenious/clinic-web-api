@@ -3,7 +3,6 @@ import User from '../../models/User';
 import Patient from '../../models/Patient';
 import Hospital from '../../models/Hospital';
 
-console.log('=========>admin controller');
 // GET /admin/doctors
 export const getDoctors = async (req: Request, res: Response) => {
   try {

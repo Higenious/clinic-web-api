@@ -1,12 +1,11 @@
-// server.ts
-
 import express from 'express';
 import adminRoutes from './routes/adminRoutes';
 import doctorRoutes from './routes/doctorRoutes';
 import authRoutes from './routes/authRoutes';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import cors from 'cors'; // <--- 1. Import CORS
+import cors from 'cors';
+import logger from './utils/logger';
 
 dotenv.config();
 
@@ -27,9 +26,10 @@ app.use(express.json());
 
 // Logging middleware
 app.use((req, res, next) => {
-  console.log(`🔥 All Incoming Request - - -: ${req.method} ${req.originalUrl}`);
+  logger.info(`🔥 Incoming Request: ${req.method} ${req.originalUrl}`);
   next();
 });
+
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date() });
@@ -40,14 +40,17 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/doctor', doctorRoutes);
 
 mongoose.connect(process.env.MONGO_URI!).then(() => {
-  console.log('Succefully Connected to MongoDB - - ');
+  logger.info('Successfully Connected to MongoDB 🔥');
+}).catch((err) => {
+  logger.error(`MongoDB Connection Error: ${err.message}`);
 });
 
 // Test route
 app.get('/test', (req, res) => res.send('Server is working'));
 
+logger.info('About to start server...');
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🔥 Sucessfully Started running Server on port ${PORT}`);
+  logger.info(`🔥 Sucessfully Started running Server on port ${PORT}`);
 });
 
 export default app;

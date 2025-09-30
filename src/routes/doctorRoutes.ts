@@ -11,7 +11,7 @@ import { getAllMedicinesLists, addMedicineLists } from "../controllers/medicines
 const router = express.Router();
 
 
-console.log('doctor toute');
+console.log('******* Doctor Route ******');
 router.post("/register", registerDoctor);
 
 router.patch("/approve-user/:userId", approveUser);
