@@ -2,6 +2,7 @@ import express from 'express';
 import adminRoutes from './routes/adminRoutes';
 import doctorRoutes from './routes/doctorRoutes';
 import authRoutes from './routes/authRoutes';
+import staffRoutes from './routes/staffRoutes'
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -39,6 +40,7 @@ app.use('/api', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/doctor', doctorRoutes);
 
+console.log('process.env.MONGO_URI', process.env.MONGO_URI);
 mongoose.connect(process.env.MONGO_URI!).then(() => {
   logger.info('Successfully Connected to MongoDB 🔥');
 }).catch((err) => {

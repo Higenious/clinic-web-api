@@ -3,10 +3,9 @@ import { Schema, model, Document } from 'mongoose';
 export interface IMedicine extends Document {
     name: string;
     dosage: string;
-    hospitalId: string; // The primary organization responsible for this entry
-    doctorId?: string;  // Optional: If the medicine is specific to one doctor
+    hospitalId?: string; 
+    doctorId?: string; 
     createdAt: Date;
-    updatedAt: Date;
 }
 
 const MedicineSchema = new Schema<IMedicine>({
@@ -14,6 +13,7 @@ const MedicineSchema = new Schema<IMedicine>({
         type: String,
         required: [true, 'Medicine name is required'],
         trim: true,
+         unique: true
     },
     dosage: {
         type: String,
@@ -21,7 +21,7 @@ const MedicineSchema = new Schema<IMedicine>({
     },
     hospitalId: {
         type: String,
-        required: [true, 'Hospital ID is required for medicine listing'],
+        required:false,
         index: true,
     },
     doctorId: {
@@ -31,6 +31,12 @@ const MedicineSchema = new Schema<IMedicine>({
     },
 }, { 
     timestamps: true // Adds createdAt and updatedAt fields
+});
+
+
+MedicineSchema.pre('save', function(next) {
+  this.name = this.name.toLowerCase().trim();
+  next();
 });
 
 // Export the Mongoose Model

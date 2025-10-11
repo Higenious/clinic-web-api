@@ -5,8 +5,10 @@ import Hospital from '../../models/Hospital';
 
 // GET /admin/doctors
 export const getDoctors = async (req: Request, res: Response) => {
+  const {hospitalId} = req.params
+  console.log('Getting doctor list for hospital', hospitalId);
   try {
-    const doctors = await User.find({ role: 'doctor' });
+    const doctors = await User.find({ role: 'doctor', hospitalId:hospitalId });
     res.json(doctors);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching doctors' });
@@ -31,10 +33,22 @@ export const approveUser = async (req: Request, res: Response) => {
 
 // GET /admin/patients/:doctorId
 export const getPatientsByDoctor = async (req: Request, res: Response) => {
-  const { doctorId } = req.params;
+  const { doctorId} = req.params;
   try {
     const patients = await Patient.find({ doctor: doctorId });
     res.json(patients);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching patients' });
+  }
+};
+
+// GET /admin/patients/:doctorId/:mobile
+export const getPatientByDoctor = async (req: Request, res: Response) => {
+  const { doctorId, mobile} = req.params;
+  try {
+    const patientDate = await Patient.find({ doctor: doctorId, phone:mobile });
+    res.send(patientDate);
+
   } catch (err) {
     res.status(500).json({ message: 'Error fetching patients' });
   }

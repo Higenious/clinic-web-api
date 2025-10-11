@@ -10,15 +10,13 @@ export const registerDoctor = async (req: Request, res: Response) => {
 
   try {
     // Validate password here if needed...
-
-    // Check if doctor already exists
     const exists = await User.findOne({ email });
     if (exists) {
       return res.status(400).json({ message: 'Doctor already exists' });
     }
 
     // ✅ Look up hospital by custom ID
-    const hospital = await Hospital.findOne({ hospitalId: hospitalCode });
+    const hospital = await Hospital.findOne({ _id: hospitalCode });
     if (!hospital) {
       return res.status(404).json({ message: 'Hospital not found with code ' + hospitalCode });
     }
@@ -102,4 +100,7 @@ export const getPatients = async (req: Request, res: Response) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
+
+
+
   

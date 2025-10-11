@@ -12,6 +12,8 @@ export interface IUser extends Document {
   isApproved: boolean;
   activeSessionId?: string;
   createdAt: Date;
+  speciality?: string; 
+  education?: string;
 }
 
 // 2. UPDATE SCHEMA
@@ -30,6 +32,14 @@ const userSchema = new Schema<IUser>({
   isApproved: { type: Boolean, default: false },
   activeSessionId: { type: String, default: null }, // <--- NEW FIELD
   createdAt: { type: Date, default: Date.now },
+  education:  { type: String, default:'MBBS'},
+  speciality: {
+    type: String,
+    required: function () {
+      return this.role === 'doctor';
+    },
+    trim: true,
+  }
 });
 
 const User = mongoose.model<IUser>('User', userSchema);
