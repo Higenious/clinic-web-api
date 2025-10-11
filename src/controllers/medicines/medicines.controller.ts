@@ -66,41 +66,68 @@ export const getAllMedicinesLists = async (req: Request<{}, {}, {}, GetMedicineQ
  * @route POST /api/medicines
  * @desc Add a new medicine to the list (requires hospitalId)
  */
-export const addMedicineLists = async (req: Request<{}, {}, AddMedicineBody>, res: Response) => {
+export const addMedicineListBulk = async (
+  req: Request<{}, {}, { medicines: { name: string; dosage?: string }[] }>,
+  res: Response
+) => {
   try {
-    const { name, dosage, hospitalId, doctorId } = req.body;
+    const { medicines } = req.body;
 
-    if (!name || !hospitalId) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Medicine name and hospitalId are required.' 
+    if (!Array.isArray(medicines) || medicines.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Medicines array is required and must contain at least one item.",
+      });
+    }
+    const uniqueMedicines = Array.from(
+  new Set(medicines.map(m => m.name.toLowerCase().trim()))
+).map(name => ({ name }));
+
+    const validMedicines = uniqueMedicines.filter(med => med.name?.trim());
+
+    if (validMedicines.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Each medicine must have a valid name.",
       });
     }
 
-    const newMedicine = new Medicine({
-      name,
-      dosage: dosage || 'Not Specified',
-      hospitalId,
-      doctorId,
-    });
-
-    await newMedicine.save();
-    
-    console.log(`New medicine added: ${name}`);
+    const inserted = await Medicine.insertMany(
+      validMedicines.map(med => ({
+        name: med.name.trim(),
+        createdBy: "global",
+      })),
+      { ordered: false }
+    );
 
     res.status(201).json({
       success: true,
-      message: 'Medicine successfully added to list.',
-      data: newMedicine,
+      message: `${inserted.length} medicines added successfully.`,
+      data: inserted,
     });
-
   } catch (error) {
-    // Handle Mongoose validation errors
-    if (error instanceof Error && 'name' in error && error.name === 'ValidationError') {
-        return res.status(400).json({ success: false, message: error.message });
-    }
-    
-    console.error('Error in addMedicineLists:', error);
-    res.status(500).json({ success: false, message: 'Server error while adding medicine.' });
+    console.error("Error in addMedicineListBulk:", error);
+    res.status(500).json({ success: false, message: "Server error while adding medicines." });
+  }
+};
+
+/** Get all commont medicines list */
+export const getAllCommonMedicines = async (req: Request, res: Response) => {
+  try {
+    const medicines = await Medicine.find({
+      $or: [
+        { createdBy: "global" },
+        { hospitalId: req.query.hospitalId || null },
+        { doctorId: req.query.doctorId || null }
+      ],
+    }).sort({ name: 1 });
+
+    res.status(200).json({
+      success: true,
+      data: medicines.map(m => m.name),
+    });
+  } catch (error) {
+    console.error("Error fetching medicines:", error);
+    res.status(500).json({ success: false, message: "Server error while fetching medicines." });
   }
 };

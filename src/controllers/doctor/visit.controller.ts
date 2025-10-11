@@ -9,7 +9,6 @@ export const addVisitNoteAndPrescription = async (req:any, res:any) => {
     const { patientId } = req.params;
     const { notes, prescription } = req.body;
 
-    // Ensure patient exists and is assigned to doctor (optional check)
     const patient = await Patient.findById(patientId);
     if (!patient) {
       return res.status(404).json({ message: 'Patient not found' });

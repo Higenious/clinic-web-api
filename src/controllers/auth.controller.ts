@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
-const uuidv4 = require('uuid').v4;
+import crypto from 'crypto';
 
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -24,7 +24,7 @@ export const loginUser = async (req: Request, res: Response) => {
     if (!isMatch)
       return res.status(401).json({ message: 'Invalid email or password.' });
 
-    const sessionId = uuidv4();
+    const sessionId = crypto.randomUUID();
     console.log('generateSessionId====>', sessionId);
  
     // 1. Generate a unique ID for this session (JTI)
@@ -39,8 +39,7 @@ export const loginUser = async (req: Request, res: Response) => {
       process.env.JWT_SECRET || 'your_jwt_secret',
       { expiresIn: '7d' }
     );
-
-    // 2. Update the user's active session ID in the database
+    
     await User.updateOne(
         { _id: user._id },
         { activeSessionId: sessionId }

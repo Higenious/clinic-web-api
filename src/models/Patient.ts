@@ -1,6 +1,4 @@
-// models/Patient.ts
-
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const noteSchema = new mongoose.Schema({
   doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -10,17 +8,23 @@ const noteSchema = new mongoose.Schema({
 
 const prescriptionSchema = new mongoose.Schema({
   doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  medications: [String], // Or use a more complex structure if needed
-  instructions: String,
+  medications: [{
+    medicine: { type: String, required: true },
+    quantity: { type: Number, required: true },
+    dailyDose: { type: String, required: true }
+  }],
+  instructions: [{ type: String }],
   createdAt: { type: Date, default: Date.now }
 });
 
 const patientSchema = new mongoose.Schema({
-  name: String,
+  name: { type: String, required: true },
   doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   age: Number,
   gender: String,
-  phone: String,
+  // IMPORTANT: 'phone' (mobile number) is set to unique for patient lookup
+  phone: { type: String, required: true, unique: true }, 
+  email: { type: String, sparse: true, required: false },
   dob: Date,
   address: String,
   medicalHistory: [String],
