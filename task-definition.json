@@ -1,0 +1,56 @@
+{
+  "family": "web-api-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "3072",
+  "executionRoleArn": "arn:aws:iam::711538462588:role/ecsTaskExecutionRole",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "containerDefinitions": [
+    {
+      "name": "myclinic-app-container",
+      "image": "711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api:PLACEHOLDER",
+      "essential": true,
+      "environment": [
+        {
+          "name": "MONGO_URI",
+          "value": "mongodb://admin:RadhaKrishna12@54.237.102.185:27017/myclinic?authSource=admin"
+        },
+        {
+          "name": "TWILIO_ACCOUNT_SID",
+          "value": "__TWILIO_ACCOUNT_SID__"
+        },
+        {
+          "name": "TWILIO_AUTH_TOKEN",
+          "value": "__TWILIO_AUTH_TOKEN__"
+        },
+        {
+          "name": "TWILIO_PHONE_NUMBER",
+          "value": "__TWILIO_PHONE_NUMBER__"
+        },
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        }
+      ],
+
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/myclinic-api-task",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
