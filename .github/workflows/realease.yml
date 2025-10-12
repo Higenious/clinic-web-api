@@ -38,6 +38,13 @@ jobs:
           echo "ECR_REPOSITORY=711538462588.dkr.ecr.us-east-1.amazonaws.com/myclinic-api" >> $GITHUB_ENV
           echo "CONTAINER_NAME=myclinic-app-container" >> $GITHUB_ENV 
 
+      - name: Generate task definition env file
+        run: |
+          echo "Creating env-aware task definition"
+          sed -i "s|__TWILIO_ACCOUNT_SID__|${{ secrets.TWILIO_ACCOUNT_SID }}|g" task-definition.json
+          sed -i "s|__TWILIO_AUTH_TOKEN__|${{ secrets.TWILIO_AUTH_TOKEN }}|g" task-definition.json
+          sed -i "s|__TWILIO_PHONE_NUMBER__|${{ secrets.TWILIO_PHONE_NUMBER }}|g" task-definition.json    
+
       - name: Build, tag, and push image to ECR
         run: |
           # Build without cache to avoid old code
