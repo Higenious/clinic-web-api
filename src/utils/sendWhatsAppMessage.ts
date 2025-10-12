@@ -12,14 +12,13 @@ const client = twilio(
 
 
 export const sendWhatsAppMessage = async (to: any, message: any) => {
-    console.log(`sendWhatsAppMessage = = = = =>'`, to, message);
   try {
     const normalized = to.startsWith("+") ? to : `+91${to}`;
+    logger.info('sending whatappApp meesage to===>', normalized)
     const response = await client.messages.create({
       from: process.env.TWILIO_WHATSAPP_NUMBER, // Twilio sandbox number
       to: `whatsapp:${normalized}`,
-      body: message,
-      statusCallback: "https://your-server.com/api/twilio/status"
+      body: message
     });
 
     console.log("✅ WhatsApp message sent:", response.sid);
