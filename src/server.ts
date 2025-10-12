@@ -36,13 +36,14 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date() });
 });
 
+logger.info('Initilizing routes===>')
 app.use('/api', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/doctor', doctorRoutes);
 
-console.log('process.env.MONGO_URI', process.env.MONGO_URI);
+console.log('process.env.MONGO_URI= = = >', process.env.MONGO_URI);
 mongoose.connect(process.env.MONGO_URI!).then(() => {
-  logger.info('Successfully Connected to MongoDB 🔥');
+  logger.info('Successfully Connected to MongoDB = => 🔥');
 }).catch((err) => {
   logger.error(`MongoDB Connection Error: ${err.message}`);
 });
@@ -52,7 +53,7 @@ app.get('/test', (req, res) => res.send('Server is working'));
 
 logger.info('About to start server...');
 app.listen(PORT, '0.0.0.0', () => {
-  logger.info(`🔥 Sucessfully Started running Server on port ${PORT}`);
+  logger.info(`🔥 Sucessfully Started running Server on port := ${PORT}`);
 });
 
 export default app;
