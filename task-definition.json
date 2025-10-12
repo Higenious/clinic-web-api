@@ -17,7 +17,7 @@
       "environment": [
         {
           "name": "MONGO_URI",
-          "value": "mongodb://admin:RadhaKrishna12@54.237.102.185:27017/myclinic?authSource=admin"
+          "value": "__MONGO_URI__"
         },
         {
           "name": "TWILIO_ACCOUNT_SID",
@@ -36,7 +36,6 @@
           "value": "production"
         }
       ],
-
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
