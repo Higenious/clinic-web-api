@@ -5,6 +5,7 @@
   "cpu": "1024",
   "memory": "3072",
   "executionRoleArn": "arn:aws:iam::711538462588:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::711538462588:role/ecsTaskRoleSNSAccess",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
