@@ -43,7 +43,7 @@ jobs:
           echo "Creating env-aware task definition"
           sed -i "s|__TWILIO_ACCOUNT_SID__|${{ secrets.TWILIO_ACCOUNT_SID }}|g" task-definition.json
           sed -i "s|__TWILIO_AUTH_TOKEN__|${{ secrets.TWILIO_AUTH_TOKEN }}|g" task-definition.json
-          sed -i "s|__TWILIO_PHONE_NUMBER__|${{ secrets.TWILIO_PHONE_NUMBER }}|g" task-definition.json    
+          sed -i "s|__TWILIO_PHONE_NUMBER__|${{ secrets.TWILIO_WHATSAPP_NUMBER }}|g" task-definition.json    
 
       - name: Build, tag, and push image to ECR
         run: |
@@ -69,7 +69,7 @@ jobs:
             MONGO_URI=${{ secrets.MONGO_URI }}
             TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }}
             TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }}
-            TWILIO_PHONE_NUMBER=${{ secrets.TWILIO_PHONE_NUMBER }}
+            TWILIO_WHATSAPP_NUMBER=${{ secrets.TWILIO_WHATSAPP_NUMBER }}
 
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

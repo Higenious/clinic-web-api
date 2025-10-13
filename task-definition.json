@@ -28,7 +28,7 @@
           "value": "__TWILIO_AUTH_TOKEN__"
         },
         {
-          "name": "TWILIO_PHONE_NUMBER",
+          "name": "TWILIO_WHATSAPP_NUMBER",
           "value": "__TWILIO_PHONE_NUMBER__"
         },
         {
