@@ -213,17 +213,20 @@ export const makeAppointment = async (
         ? format(new Date(appointmentResult.date), "dd MMM yyyy, hh:mm a")
         : "Unknown Date";
 
-      const message = `
-      👩‍⚕️ Hello *${patientDetails.name}*,
-      ✅ Your appointment is confirmed!
-      🏥 *Hospital:* ${hospitalName}
-      👨‍⚕️ *Doctor:* ${doctorName}
-      📅 *Date & Time:* ${formattedDate}
-      🔢 *Token No:* ${appointmentResult?.tokenNumber}
+const message = `
+👩‍⚕️ *Hello ${patientDetails.name},*
 
-      ✨ Please arrive 15 minutes early.  
-      Thank you for choosing *Cure Link*! 🌿
-      `;
+✅ Your appointment is confirmed!
+
+🏥 *Hospital:* ${hospitalName}  
+👨‍⚕️ *Doctor:* ${doctorName}  
+📅 *Date & Time:* ${formattedDate}  
+🔢 *Token No:* ${appointmentResult?.tokenNumber}
+
+✨ Please arrive *15 minutes early*.  
+Thank you for choosing *MediPanels*.  
+Wishing you good health! 🌿
+`;
 
     try {
     if (messageType === "sms") {
